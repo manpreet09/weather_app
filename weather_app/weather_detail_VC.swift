@@ -64,17 +64,14 @@ class weather_detail_VC: UIViewController {
         let visibile = "\(String(describing: detail_array[0]["visibility"]!!))"
         visibility_lb.text = visibile.prefix(2)+" Km"
        // visibility_lb.text = "\(String(describing: detail_array[0]["visibility"]!!))"+" km"
-       // description_lb.text = "\(String(describing: detail_array[0]["description"]!!))"
+        description_lb.text = "\(String(describing: detail_array[0]["description"]!!))"
         
         let max_temp_ = "\(String(describing: detail_array[0]["temp_max"]!!))"
         let min_temp_ = "\(String(describing: detail_array[0]["temp_min"]!!))"
        
         max_temp_.prefix(2)
         min_temp_.prefix(2)
-//        var str = [String]()
-//        str.append(String(max_temp_.prefix(2)))
-//        var str1 = [String]()
-//        str1.append(String(min_temp_.prefix(2)))
+
         
        max_temp.text = "\(max_temp_.prefix(2))"
         min_temp.text = "\(min_temp_.prefix(2))"

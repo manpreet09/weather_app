@@ -11,14 +11,9 @@ import Alamofire
 
 
 var states_id =  ["4163971","2147714","2174003"]
-//var city_name_array = [String]()
-//var city_min_temp_array = [String]()
-//var city_max_temp_array = [String]()
 
-//var detail_Dictionary : NSMutableDictionary = [:]
-//var nsDict = [String:String]()
-var array_to_pass_val = [[String: String]]()
-//var array_to_pass_val = [String]()
+var array_to_pass_val = [[String: String]]()   // created array to pass the value to next controller
+
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource{
     
     
@@ -29,11 +24,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     var city_name_array = [String]()
     var city_temp_array = [String]()
-    //var city_max_temp_array = [String]()
     
-    //@IBOutlet weak var City_name_lb: UILabel!
-    
-   // @IBOutlet weak var weather_lb: UILabel!
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated);
@@ -44,21 +35,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        //self.view.backgroundColor = UIColor(patternImage: UIImage(named: "day_back.png")!)
-        // Do any additional setup after loading the view, typically from a nib.
         
-        //let nib = UINib(nibName: "reuseIdentifier", bundle: nil)
-        //Weather_table_Vw.register(nib, forCellReuseIdentifier:"reuseIdentifier")
-      //  Weather_table_Vw.register(UITableViewCell.self, forCellReuseIdentifier: "reuseIdentifier")
-       
         
-       // Weather_table_Vw.backgroundColor = UIColor.lightGray;
-        
-         Weather_table_Vw.backgroundView = UIImageView(image: UIImage(named: "day_back.png"))
+        Weather_table_Vw.backgroundView = UIImageView(image: UIImage(named: "day_back.png"))
+        // tableview delegates
         Weather_table_Vw.dataSource = self
         Weather_table_Vw.delegate = self
         
-        //activity_indicator.isHidden = false
+       
         activity_indicator.startAnimating()
     
         for i in states_id
@@ -72,7 +56,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             print(urlstring)
             
             
-            
+            // post method
             
             let url =  Alamofire.request(urlstring, method: .post, parameters: nil,encoding: JSONEncoding.default, headers: nil).responseJSON
                 {
@@ -86,8 +70,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                     {
                         
                         let data  = jsonData as! NSDictionary
-                        // Casting fails
-                        // Could not cast value of type '__NSCFArray' (0x19f952150) to 'NSMutableDictionary' (0x19f9523f8).
+                        
                         print("Data: \(data)")
                         let city_name = data["name"]!
                         print(data["name"]!)
@@ -104,7 +87,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                        // print(max_tem!)
                         
                         
-                        // data need to pass next view append in one array
+                        // data need to pass next view append in dictionary
                         
                         let max_tem = filterdata!["temp_max"]   // max temp
                         
@@ -124,8 +107,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                         
                         let weather_descript = data["weather"] as! NSArray
                         print("\(String(describing: weather_descript))" )
-                        let weather_descript_cond = (weather_descript.value(forKey: "main"))
+                        let weather_descript_cond = (weather_descript.value(forKey: "main")as! NSArray).object(at: 0)
                         print(weather_descript_cond,"weather_descript_cond")
+                        
+                       
+                        
+                    
                         
                             
                         
@@ -136,9 +123,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                         
                         
                         
-                        var detail_Dictionary = [String: Any]()
+                        var detail_Dictionary = [String: Any]() // craeted dictionary
                         
-                        //city_name
+                       
                         
                         detail_Dictionary = ["city_name" : "\(String(describing: city_name))",
                         "temp_max" : "\(String(describing: max_tem!))",
@@ -148,7 +135,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                                 "sunset" : "\(String(describing: sun_set!))",
                                 "sunrise" : "\(String(describing: sun_rise!))",
                                 "visibility" : "\(String(describing: visibility!))",
-                               // "description" : "\(String(describing: weather_descript_cond))",
+                                "description" : "\(String(describing: weather_descript_cond))",
                                 "speed" : "\(String(describing: wind_speed!))"]
                         
                         print("detail_Dictionary",detail_Dictionary)
@@ -164,14 +151,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                        print("array_to_pass_val",array_to_pass_val)
                         
                         self.city_temp_array.append(String(describing: tem_val))
-                       // self.city_max_temp_array.append(String(describing: max_tem!))
+                       
                         
                         print(self.city_temp_array)
-                        //print(self.city_name_array)
                         self.Weather_table_Vw.reloadData()
                         
-                        //print("min_tem: \(String(describing: min_tem))")
-                       // print("max_tem: \(String(describing: max_tem))")
+                       
                     }
                     
                    
@@ -187,13 +172,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
         activity_indicator.isHidden = true
         activity_indicator.stopAnimating()
-       // Weather_table_Vw.reloadData()
-        
+       
         
     }
 
 
-  // tableview methods
+  // tableview delegate and datasource methods
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
@@ -216,7 +200,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         cell.backgroundView = imageView
         
         let city_name_lb = cell.contentView.viewWithTag(101) as! UILabel
-        //var value = city_name_array[indexPath.row]
+        
         
         city_name_lb.text = city_name_array[indexPath.row]
         
@@ -226,37 +210,19 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         cell.selectionStyle = .none
         
-        
-//        if (cell == nil)
-//        {
-//            tableView.register(UINib(nibName: "cell", bundle: nil), forCellReuseIdentifier: "cell")
-//            cell = (tableView.dequeueReusableCell(withIdentifier: "cell"))!
-//
-//            //cell.textLabel?.text = " hi"
-//
-//
-//        }
-      // cell.textLabel?.text = " hi"
-       // City_name_lb.text = "table value"
-    
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-       // let weather_Detail_Controller = storyboard?.instantiateInitialViewController() as! weather_detail_VC
-       // self.navigationController?.pushViewController(weather_Detail_Controller, animated: true)
+       
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let detail_VC = storyboard.instantiateViewController(withIdentifier: "weather_detail_VC") as! weather_detail_VC
-        
-        //detail_VC.detail_array = (array_to_pass_val as AnyObject) as! NSMutableArray
+    
         detail_VC.detail_array.append(array_to_pass_val[indexPath.row] as AnyObject)
         self.navigationController?.pushViewController(detail_VC, animated: true)
        
-        
-        // table cell clicked
-        //var indexrow : Int = 0
-        //indexrow = indexPath.row
+    
     }
     
 }
